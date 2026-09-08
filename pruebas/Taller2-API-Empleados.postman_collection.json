@@ -1,0 +1,357 @@
+{
+  "info": {
+    "name": "Taller 2 - API Empleados (UAM - Servicios Web)",
+    "description": "Ocho pruebas obligatorias del Taller #2: cinco exitosas (una por endpoint), dos con datos invalidos y una con identificador inexistente.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. GET listar empleados (200 OK)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/api/empleados",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "empleados"
+          ]
+        },
+        "description": "Devuelve el arreglo JSON con todos los empleados."
+      },
+      "response": []
+    },
+    {
+      "name": "2. GET buscar por id (200 OK)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/api/empleados/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "empleados",
+            "1"
+          ]
+        },
+        "description": "Devuelve el empleado con id 1."
+      },
+      "response": []
+    },
+    {
+      "name": "3. POST registrar empleado (201 Created)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/api/empleados",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "empleados"
+          ]
+        },
+        "description": "Registra un empleado valido y devuelve 201 con la cabecera Location.",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombreCompleto\": \"Ana Beatriz Rojas\",\n  \"correo\": \"ana.rojas@uam.edu.ni\",\n  \"salario\": 27500.75,\n  \"aniosExperiencia\": 4,\n  \"fechaContratacion\": \"2024-05-10\",\n  \"activo\": true,\n  \"departamento\": \"VENTAS\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "4. PUT actualizar empleado (200 OK)",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/api/empleados/2",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "empleados",
+            "2"
+          ]
+        },
+        "description": "Actualiza por completo el empleado con id 2.",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombreCompleto\": \"Maria Lopez Guzman\",\n  \"correo\": \"maria.guzman@uam.edu.ni\",\n  \"salario\": 35000.0,\n  \"aniosExperiencia\": 8,\n  \"fechaContratacion\": \"2020-08-01\",\n  \"activo\": true,\n  \"departamento\": \"ADMINISTRACION\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "5. DELETE eliminar empleado (200 OK)",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/api/empleados/3",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "empleados",
+            "3"
+          ]
+        },
+        "description": "Elimina el empleado con id 3 y devuelve un mensaje JSON."
+      },
+      "response": []
+    },
+    {
+      "name": "6. POST datos invalidos (400 Bad Request)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/api/empleados",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "empleados"
+          ]
+        },
+        "description": "Nombre vacio, correo sin formato, salario cero, experiencia negativa, fecha futura y departamento nulo.",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombreCompleto\": \"\",\n  \"correo\": \"correo-invalido\",\n  \"salario\": 0,\n  \"aniosExperiencia\": -5,\n  \"fechaContratacion\": \"2030-01-01\",\n  \"activo\": null,\n  \"departamento\": null\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "7. PUT datos invalidos (400 Bad Request)",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/api/empleados/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "empleados",
+            "1"
+          ]
+        },
+        "description": "Nombre demasiado corto, salario negativo y experiencia fuera del rango permitido.",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombreCompleto\": \"AB\",\n  \"correo\": \"ivan.chavarria@uam.edu.ni\",\n  \"salario\": -1500.0,\n  \"aniosExperiencia\": 90,\n  \"fechaContratacion\": \"2023-02-15\",\n  \"activo\": true,\n  \"departamento\": \"DESARROLLO\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "8. GET id inexistente (404 Not Found)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/api/empleados/999",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "empleados",
+            "999"
+          ]
+        },
+        "description": "Identificador que no existe: responde 404 con mensaje JSON."
+      },
+      "response": []
+    },
+    {
+      "name": "EXTRA - DELETE id inexistente (404)",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/api/empleados/999",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "empleados",
+            "999"
+          ]
+        },
+        "description": ""
+      },
+      "response": []
+    },
+    {
+      "name": "EXTRA - Filtrar por departamento (200)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/api/empleados/departamento/DESARROLLO",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "empleados",
+            "departamento",
+            "DESARROLLO"
+          ]
+        },
+        "description": ""
+      },
+      "response": []
+    },
+    {
+      "name": "EXTRA - Departamento invalido (400)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/api/empleados/departamento/COCINA",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "empleados",
+            "departamento",
+            "COCINA"
+          ]
+        },
+        "description": ""
+      },
+      "response": []
+    }
+  ]
+}

@@ -1,0 +1,146 @@
+### =====================================================================
+### TALLER #2 - API REST de Empleados (Spring Boot)
+### Archivo de pruebas para el cliente HTTP de IntelliJ IDEA
+###
+### COMO USARLO:
+###   1. Ejecute la aplicacion (ApiTaller2Application) y espere el mensaje "Started".
+###   2. Ejecute las pruebas EN ORDEN, con el boton verde de la izquierda de cada peticion.
+###   3. Tome la captura de la pestana "Response" mostrando el codigo HTTP y el JSON.
+###
+### RESUMEN: 5 pruebas exitosas (una por endpoint), 2 con datos invalidos
+###          y 1 con identificador inexistente = 8 pruebas obligatorias.
+### =====================================================================
+
+@host = http://localhost:8080
+
+### ---------------------------------------------------------------------
+### PRUEBA 1 (EXITOSA) - GET listar todos los empleados
+### Esperado: 200 OK y un arreglo JSON con los 3 empleados de ejemplo
+### ---------------------------------------------------------------------
+GET {{host}}/api/empleados
+Accept: application/json
+
+### ---------------------------------------------------------------------
+### PRUEBA 2 (EXITOSA) - GET buscar un empleado por identificador
+### Esperado: 200 OK y el JSON del empleado con id 1
+### ---------------------------------------------------------------------
+GET {{host}}/api/empleados/1
+Accept: application/json
+
+### ---------------------------------------------------------------------
+### PRUEBA 3 (EXITOSA) - POST registrar un nuevo empleado
+### Esperado: 201 Created, el empleado creado con id 4 y cabecera Location
+### ---------------------------------------------------------------------
+POST {{host}}/api/empleados
+Content-Type: application/json
+
+{
+  "nombreCompleto": "Ana Beatriz Rojas",
+  "correo": "ana.rojas@uam.edu.ni",
+  "salario": 27500.75,
+  "aniosExperiencia": 4,
+  "fechaContratacion": "2024-05-10",
+  "activo": true,
+  "departamento": "VENTAS"
+}
+
+### ---------------------------------------------------------------------
+### PRUEBA 4 (EXITOSA) - PUT actualizar un empleado existente
+### Esperado: 200 OK y el empleado con id 2 ya modificado
+### ---------------------------------------------------------------------
+PUT {{host}}/api/empleados/2
+Content-Type: application/json
+
+{
+  "nombreCompleto": "Maria Lopez Guzman",
+  "correo": "maria.guzman@uam.edu.ni",
+  "salario": 35000.00,
+  "aniosExperiencia": 8,
+  "fechaContratacion": "2020-08-01",
+  "activo": true,
+  "departamento": "ADMINISTRACION"
+}
+
+### ---------------------------------------------------------------------
+### PRUEBA 5 (EXITOSA) - DELETE eliminar un empleado
+### Esperado: 200 OK y un mensaje JSON de confirmacion
+### ---------------------------------------------------------------------
+DELETE {{host}}/api/empleados/3
+Accept: application/json
+
+### ---------------------------------------------------------------------
+### PRUEBA 6 (DATOS INVALIDOS) - POST con todos los campos incorrectos
+### nombre vacio, correo sin formato, salario en cero, experiencia negativa,
+### fecha futura y departamento nulo.
+### Esperado: 400 Bad Request con "errores" campo por campo
+### ---------------------------------------------------------------------
+POST {{host}}/api/empleados
+Content-Type: application/json
+
+{
+  "nombreCompleto": "",
+  "correo": "correo-invalido",
+  "salario": 0,
+  "aniosExperiencia": -5,
+  "fechaContratacion": "2030-01-01",
+  "activo": null,
+  "departamento": null
+}
+
+### ---------------------------------------------------------------------
+### PRUEBA 7 (DATOS INVALIDOS) - PUT con nombre muy corto y salario negativo
+### Esperado: 400 Bad Request con el detalle de los campos invalidos
+### ---------------------------------------------------------------------
+PUT {{host}}/api/empleados/1
+Content-Type: application/json
+
+{
+  "nombreCompleto": "AB",
+  "correo": "ivan.chavarria@uam.edu.ni",
+  "salario": -1500.00,
+  "aniosExperiencia": 90,
+  "fechaContratacion": "2023-02-15",
+  "activo": true,
+  "departamento": "DESARROLLO"
+}
+
+### ---------------------------------------------------------------------
+### PRUEBA 8 (IDENTIFICADOR INEXISTENTE) - GET con un id que no existe
+### Esperado: 404 Not Found con un mensaje JSON comprensible
+### ---------------------------------------------------------------------
+GET {{host}}/api/empleados/999
+Accept: application/json
+
+### =====================================================================
+### PRUEBAS ADICIONALES (opcionales, refuerzan la explicacion en la revision)
+### =====================================================================
+
+### EXTRA 1 - DELETE con identificador inexistente. Esperado: 404 Not Found
+DELETE {{host}}/api/empleados/999
+Accept: application/json
+
+### EXTRA 2 - PUT con identificador inexistente. Esperado: 404 Not Found
+PUT {{host}}/api/empleados/999
+Content-Type: application/json
+
+{
+  "nombreCompleto": "Empleado Fantasma",
+  "correo": "fantasma@uam.edu.ni",
+  "salario": 10000.00,
+  "aniosExperiencia": 2,
+  "fechaContratacion": "2024-01-01",
+  "activo": true,
+  "departamento": "SOPORTE"
+}
+
+### EXTRA 3 - Filtrar por departamento (enumeracion). Esperado: 200 OK
+GET {{host}}/api/empleados/departamento/DESARROLLO
+Accept: application/json
+
+### EXTRA 4 - Departamento inexistente en la ruta. Esperado: 400 Bad Request
+GET {{host}}/api/empleados/departamento/COCINA
+Accept: application/json
+
+### EXTRA 5 - Identificador no numerico. Esperado: 400 Bad Request
+GET {{host}}/api/empleados/abc
+Accept: application/json
