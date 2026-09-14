@@ -1,64 +1,50 @@
-# Taller #2 — API REST de Empleados con validación de datos (Spring Boot)
+# Taller #2 - API de Empleados
 
-**Asignatura:** Servicios Web — UAM
-**Proyecto:** `api-taller2`
-**Entidad seleccionada:** `Empleado`
-**Ruta base:** `/api/empleados`
+Proyecto: api-taller2
+Asignatura: Servicios Web (UAM)
+Entidad seleccionada: Empleado
+Ruta base: /api/empleados
 
----
+## Descripción
 
-## 1. Descripción
+API REST hecha en Spring Boot para administrar empleados. Tiene los cinco endpoints
+pedidos, un DTO con validaciones y un manejador global de errores. Los datos se guardan
+en una lista en memoria, así que no se necesita base de datos y se reinician cada vez que
+se detiene la aplicación.
 
-API REST construida con Spring Boot que administra la entidad **Empleado** del proyecto de
-asignatura. Implementa los cinco endpoints obligatorios (GET, GET por id, POST, PUT y DELETE),
-un DTO con reglas de validación, respuestas JSON con códigos HTTP reales y un manejador global
-de errores. El almacenamiento es **en memoria** (una lista dentro del servicio), por lo que no
-requiere base de datos y los datos se reinician al detener la aplicación.
+## Requisitos
 
----
+- JDK 17 o superior
+- Spring Boot 4.1.1 con las dependencias Spring Web y Validation
+- Maven (el proyecto incluye el wrapper mvnw)
 
-## 2. Requisitos y ejecución
+## Cómo ejecutarlo
 
-| Requisito | Versión |
-|---|---|
-| JDK | 17 o superior |
-| Maven | Incluido en el proyecto (`mvnw` / `mvnw.cmd`) |
-| Spring Boot | 4.1.1 |
-| Dependencias | Spring Web (MVC) y Validation |
+En IntelliJ IDEA: abrir la carpeta como proyecto Maven y ejecutar la clase
+ApiTaller2Application. La API queda en http://localhost:8080
 
-### Ejecutar desde IntelliJ IDEA
-1. Abrir la carpeta `api-taller2` como proyecto Maven.
-2. Esperar a que IntelliJ descargue las dependencias.
-3. Ejecutar la clase `ApiTaller2Application` (botón ▶).
-4. La API queda publicada en `http://localhost:8080`.
+Desde la terminal:
 
-### Ejecutar desde la terminal
-```bash
-./mvnw spring-boot:run        # Linux / macOS
-mvnw.cmd spring-boot:run      # Windows
+```
+mvnw.cmd spring-boot:run
 ```
 
-Al iniciar se cargan **3 empleados de ejemplo** (ids 1, 2 y 3) para poder probar de inmediato.
+Al iniciar se cargan 3 empleados de ejemplo (ids 1, 2 y 3).
 
----
+## Entidad Empleado
 
-## 3. Entidad seleccionada: Empleado
+| Atributo | Tipo |
+|---|---|
+| id | Long |
+| nombreCompleto | texto |
+| correo | texto (email) |
+| salario | decimal |
+| aniosExperiencia | entero |
+| fechaContratacion | fecha |
+| activo | booleano |
+| departamento | enum (DESARROLLO, INFRAESTRUCTURA, SOPORTE, ADMINISTRACION, VENTAS) |
 
-El DTO tiene un identificador y **siete atributos adicionales** de distintos tipos de dato,
-cumpliendo el mínimo de cinco exigido por el taller.
-
-| Atributo | Tipo de dato | Descripción |
-|---|---|---|
-| `id` | Long | Identificador único, generado por la API |
-| `nombreCompleto` | Texto | Nombre y apellidos del empleado |
-| `correo` | Texto (email) | Correo institucional |
-| `salario` | Número decimal | Salario mensual |
-| `aniosExperiencia` | Número entero | Años de experiencia laboral |
-| `fechaContratacion` | Fecha | Fecha de ingreso a la empresa |
-| `activo` | Booleano | Indica si el empleado sigue laborando |
-| `departamento` | Enumeración | DESARROLLO, INFRAESTRUCTURA, SOPORTE, ADMINISTRACION, VENTAS |
-
-### Ejemplo de JSON
+Ejemplo de JSON:
 
 ```json
 {
@@ -73,44 +59,34 @@ cumpliendo el mínimo de cinco exigido por el taller.
 }
 ```
 
----
-
-## 4. Tabla de endpoints
+## Endpoints
 
 | Método | Ruta | Función | Respuestas |
 |---|---|---|---|
-| `GET` | `/api/empleados` | Lista todos los registros | `200 OK` + arreglo JSON |
-| `GET` | `/api/empleados/{id}` | Busca un registro por identificador | `200 OK` / `404 Not Found` |
-| `POST` | `/api/empleados` | Registra un nuevo empleado | `201 Created` / `400 Bad Request` |
-| `PUT` | `/api/empleados/{id}` | Actualiza un registro existente | `200 OK` / `400` / `404` |
-| `DELETE` | `/api/empleados/{id}` | Elimina un registro | `200 OK` / `404 Not Found` |
-| `GET` | `/api/empleados/departamento/{departamento}` | *(adicional)* Filtra por enumeración | `200 OK` / `400 Bad Request` |
+| GET | /api/empleados | Listar todos | 200 |
+| GET | /api/empleados/{id} | Buscar por id | 200 / 404 |
+| POST | /api/empleados | Registrar | 201 / 400 |
+| PUT | /api/empleados/{id} | Actualizar | 200 / 400 / 404 |
+| DELETE | /api/empleados/{id} | Eliminar | 200 / 404 |
+| GET | /api/empleados/departamento/{departamento} | Filtrar por departamento | 200 / 400 |
 
-El `POST` exitoso devuelve además la cabecera `Location` con la URL del recurso creado.
+## Validaciones
 
----
+Están en EmpleadoDTO y se activan con @Valid en POST y PUT:
 
-## 5. Reglas de validación (`EmpleadoDTO`)
+- nombreCompleto: @NotBlank y @Size(min = 3, max = 80)
+- correo: @NotBlank y @Email
+- salario: @NotNull, @DecimalMin mayor que cero y @Digits(8, 2)
+- aniosExperiencia: @NotNull, @Min(0) y @Max(50)
+- fechaContratacion: @NotNull y @PastOrPresent
+- activo: @NotNull
+- departamento: @NotNull
 
-Se implementan **14 reglas** sobre 7 atributos, muy por encima del mínimo de cinco.
+## Errores
 
-| Atributo | Anotaciones | Mensaje cuando falla |
-|---|---|---|
-| `nombreCompleto` | `@NotBlank`, `@Size(3–80)` | Obligatorio / debe tener entre 3 y 80 caracteres |
-| `correo` | `@NotBlank`, `@Email` | Obligatorio / formato válido |
-| `salario` | `@NotNull`, `@DecimalMin(0, exclusivo)`, `@Digits(8,2)` | Obligatorio / mayor que cero / máximo 8 enteros y 2 decimales |
-| `aniosExperiencia` | `@NotNull`, `@Min(0)`, `@Max(50)` | Obligatorio / no negativo / no mayor a 50 |
-| `fechaContratacion` | `@NotNull`, `@PastOrPresent` | Obligatoria / no puede ser futura |
-| `activo` | `@NotNull` | Debe indicarse true o false |
-| `departamento` | `@NotNull` | Obligatorio y limitado a los valores de la enumeración |
+Los errores los arma GlobalExceptionHandler con @RestControllerAdvice.
 
-La validación se activa con `@Valid` en los endpoints `POST` y `PUT`.
-
----
-
-## 6. Formato de las respuestas de error
-
-**400 Bad Request** — datos inválidos (generado por `MethodArgumentNotValidException`):
+Datos inválidos (400):
 
 ```json
 {
@@ -118,13 +94,12 @@ La validación se activa con `@Valid` en los endpoints `POST` y `PUT`.
   "mensaje": "Los datos enviados no son validos",
   "errores": {
     "nombreCompleto": "El nombre completo es obligatorio",
-    "correo": "El correo debe tener un formato valido",
     "salario": "El salario debe ser mayor que cero"
   }
 }
 ```
 
-**404 Not Found** — identificador inexistente:
+Id que no existe (404):
 
 ```json
 {
@@ -133,71 +108,18 @@ La validación se activa con `@Valid` en los endpoints `POST` y `PUT`.
 }
 ```
 
-Todos los errores se centralizan en `GlobalExceptionHandler`, anotado con `@RestControllerAdvice`.
-
----
-
-## 7. Estructura del proyecto
+## Estructura
 
 ```
-api-taller2
-├── pom.xml
-├── README.md
-├── evidencias/                      Capturas de las 8 pruebas
-├── pruebas/
-│   ├── empleados.http               Pruebas para el cliente HTTP de IntelliJ
-│   └── Taller2-API-Empleados.postman_collection.json
-└── src/main/java/ni/edu/uam/api_taller2
-    ├── ApiTaller2Application.java   Clase principal
-    ├── controllers/                 EmpleadoController  (rutas y códigos HTTP)
-    ├── dto/                         EmpleadoDTO, RespuestaMensaje
-    ├── models/                      Empleado, Departamento (enum)
-    ├── services/                    EmpleadoService (lógica y datos en memoria)
-    └── exceptions/                  GlobalExceptionHandler, RecursoNoEncontradoException
+src/main/java/ni/edu/uam/api_taller2
+  ApiTaller2Application.java
+  controllers/EmpleadoController.java
+  dto/EmpleadoDTO.java, RespuestaMensaje.java
+  models/Empleado.java, Departamento.java
+  services/EmpleadoService.java
+  exceptions/GlobalExceptionHandler.java, RecursoNoEncontradoException.java
 ```
 
----
+## Autor
 
-## 8. Recorrido de una solicitud (para la revisión oral)
-
-Ejemplo con `POST /api/empleados`:
-
-1. **Cliente** envía la petición HTTP con un JSON en el cuerpo.
-2. **Spring (DispatcherServlet)** busca el controlador cuya ruta coincida: `EmpleadoController`.
-3. **Jackson** convierte el JSON en un objeto `EmpleadoDTO` (deserialización).
-4. **`@Valid`** ejecuta Bean Validation sobre el DTO.
-   - Si algo falla, se lanza `MethodArgumentNotValidException`, la atrapa el
-     `GlobalExceptionHandler` y **la petición nunca entra al método**: responde `400`.
-5. **Controlador** delega en `EmpleadoService`.
-6. **Servicio** convierte el DTO en la entidad `Empleado`, le asigna el id y lo guarda en la lista.
-7. **Servicio** devuelve un `EmpleadoDTO` con el id ya generado.
-8. **Controlador** lo envuelve en un `ResponseEntity` con estado `201 Created` y cabecera `Location`.
-9. **Jackson** serializa el DTO a JSON y el cliente recibe la respuesta.
-
-En el caso de un id inexistente, el paso 6 lanza `RecursoNoEncontradoException`, que el
-`@RestControllerAdvice` traduce a un `404 Not Found` con mensaje JSON.
-
----
-
-## 9. Pruebas realizadas
-
-Ocho pruebas obligatorias documentadas en `pruebas/empleados.http` y en la colección de Postman:
-
-| # | Prueba | Método y ruta | Resultado esperado |
-|---|---|---|---|
-| 1 | Listar empleados | `GET /api/empleados` | `200 OK` |
-| 2 | Buscar por id | `GET /api/empleados/1` | `200 OK` |
-| 3 | Registrar empleado | `POST /api/empleados` | `201 Created` |
-| 4 | Actualizar empleado | `PUT /api/empleados/2` | `200 OK` |
-| 5 | Eliminar empleado | `DELETE /api/empleados/3` | `200 OK` |
-| 6 | Datos inválidos | `POST /api/empleados` | `400 Bad Request` |
-| 7 | Datos inválidos | `PUT /api/empleados/1` | `400 Bad Request` |
-| 8 | Identificador inexistente | `GET /api/empleados/999` | `404 Not Found` |
-
-Las capturas correspondientes están en la carpeta `evidencias/`.
-
----
-
-## 10. Autor
-
-Iván Chavarría — Servicios Web, UAM — Taller #2
+Iván Chavarría
